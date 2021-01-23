@@ -1,0 +1,25 @@
+cmake_minimum_required(VERSION 3.15)
+
+project(MetaRay)
+
+set(CMAKE_CXX_STANDARD 17)
+
+include_directories(includes)
+aux_source_directory(src SRCS)
+
+message(${SRCS})
+
+set(ExecTarget ${PROJECT_NAME})
+add_executable(${ExecTarget} ${SRCS})
+
+find_package(jsoncpp CONFIG REQUIRED)
+target_link_libraries(${ExecTarget} PRIVATE jsoncpp_lib jsoncpp_object)
+
+find_package(glfw3 CONFIG REQUIRED)
+target_link_libraries(${ExecTarget} PRIVATE glfw)
+
+find_package(Eigen3 CONFIG REQUIRED)
+target_link_libraries(${ExecTarget} PRIVATE Eigen3::Eigen)
+
+find_package(imgui CONFIG REQUIRED)
+target_link_libraries(${ExecTarget} PRIVATE imgui::imgui)
