@@ -34,6 +34,11 @@
 
 # Output directory
 build
+cmake-build-debug
+cmake-build-release
 
 # VSCode Settings
 .vscode
+
+# Clion projects
+.idea

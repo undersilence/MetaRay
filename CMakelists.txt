@@ -4,10 +4,16 @@ project(MetaRay)
 
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(includes)
-aux_source_directory(src SRCS)
+include_directories(include)
 
-message(${SRCS})
+# aux_source_directory(src/MTR MTR_SRCS)
+# aux_source_directory(src SRCS)
+
+set(SRCS 
+    src/MTR/test.cpp
+    src/MTR/softras/render.cpp
+    src/MTR/softras/shader.cpp)
+
 
 set(ExecTarget ${PROJECT_NAME})
 add_executable(${ExecTarget} ${SRCS})
@@ -23,3 +29,6 @@ target_link_libraries(${ExecTarget} PRIVATE Eigen3::Eigen)
 
 find_package(imgui CONFIG REQUIRED)
 target_link_libraries(${ExecTarget} PRIVATE imgui::imgui)
+
+find_package(spdlog CONFIG REQUIRED)
+target_link_libraries(${ExecTarget} PRIVATE spdlog::spdlog spdlog::spdlog_header_only)
