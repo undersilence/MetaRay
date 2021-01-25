@@ -9,7 +9,7 @@ include_directories(include)
 # aux_source_directory(src/MTR MTR_SRCS)
 # aux_source_directory(src SRCS)
 
-set(SRCS 
+set(SRCS
     src/MTR/test.cpp
     src/MTR/softras/render.cpp
     src/MTR/softras/shader.cpp)
