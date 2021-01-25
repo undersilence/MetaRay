@@ -17,11 +17,9 @@ public:
   void draw_elements();
 
   // void set_shader(const std::shared_ptr<SoftShader>& shader);
-  void set_vertex_shader(
-      const std::function<vec4f(vertex_shader_payload &,
-                                fragment_shader_payload &)> &VertexShader);
-  void set_fragment_shader(
-      const std::function<vec3f(fragment_shader_payload &)> &FragmentShader);
+  void
+  set_vertex_shader(const std::function<vec4f(A2V &, V2F &)> &VertexShader);
+  void set_fragment_shader(const std::function<vec3f(V2F &)> &FragmentShader);
 
   arr_buf_id load_array(const std::vector<float> &arr);
   ind_buf_id load_indices(const std::vector<int> &indices);
@@ -41,12 +39,11 @@ protected:
   int width, height;
   int next_id = 0;
   // std::shared_ptr<SoftShader> shader;
-  std::function<vec4f(vertex_shader_payload &, fragment_shader_payload &)>
-      vertex_shader;
-  std::function<vec3f(fragment_shader_payload &)> fragment_shader;
+  std::function<vec4f(A2V &, V2F &)> vertex_shader = simple_vertex_shader;
+  std::function<vec3f(V2F &)> fragment_shader = simple_fragment_shader;
 
   void draw_line(vec3f begin, vec3f end);
-  void rasterize_triangle();
+  void rasterize_triangle(V2F a, V2F b, V2F c);
 
   // VERTEX SHADER -> MVP -> Clipping -> /.W -> VIEWPORT -> DRAWLINE/DRAWTRI ->
   // FRAGSHADER

@@ -3,11 +3,17 @@
 #include "MTR/core.h"
 #include "MTR/math_defs.h"
 
-struct vertex_shader_payload {
+struct A2V {
   vec3f position;
+  mat4f project;
+  mat4f view;
+  mat4f model;
 };
 
-struct fragment_shader_payload {
+struct V2F {
+  vec4f screenpos;
+  // vec4f worldpos;
+  // vec4f viewpos;
   vec3f color;
 };
 
@@ -24,3 +30,7 @@ public:
 
 protected:
 };
+
+vec4f simple_vertex_shader(A2V &a2v, V2F &v2f);
+
+vec3f simple_fragment_shader(V2F &v2f);

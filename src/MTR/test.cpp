@@ -6,6 +6,7 @@
 int main() {
   auto raster = std::make_shared<SoftRaster>(800, 600);
   raster->test();
+  raster->draw_arrays();
   printf("hello from MTR\n");
   return 0;
 }

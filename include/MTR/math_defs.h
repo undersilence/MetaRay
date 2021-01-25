@@ -22,4 +22,3 @@ typedef Eigen::Matrix<int, 4, 1> vec4i;
 typedef Eigen::Matrix<scalar, 4, 4> mat4s;
 typedef Eigen::Matrix<float, 4, 4> mat4f;
 typedef Eigen::Matrix<int, 4, 4> mat4i;
-
