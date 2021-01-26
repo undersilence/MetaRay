@@ -5,9 +5,9 @@
 
 struct A2V {
   vec3f position;
-  mat4f project;
-  mat4f view;
-  mat4f model;
+  // mat4f project;
+  // mat4f view;
+  // mat4f model;
 };
 
 struct V2F {

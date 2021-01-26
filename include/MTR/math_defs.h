@@ -23,3 +23,6 @@ typedef Eigen::Matrix<scalar, 4, 4> mat4s;
 typedef Eigen::Matrix<float, 4, 4> mat4f;
 typedef Eigen::Matrix<int, 4, 4> mat4i;
 
+mat4f perspective(float fovy, float aspect, float near, float far);
+mat4f ortho(float left, float right, float bottom, float top, float near, float far);
+mat4f look_at(const vec3f &eye, const vec3f &center, const vec3f &up);

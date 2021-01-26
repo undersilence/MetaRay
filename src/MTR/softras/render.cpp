@@ -31,6 +31,9 @@ void SoftRaster::draw_arrays(SoftRaster::Primitive mode) {
   int stride = 3;
 
   auto mvp = project * view * model;
+  shader->project = project;
+  shader->view = view;
+  shader->model = model;
 
   if (mode == Primitive::Triangle) {
     auto &curr_buf = arr_bufs[0];
@@ -43,9 +46,9 @@ void SoftRaster::draw_arrays(SoftRaster::Primitive mode) {
       for (int j = 0; j < 3; j++) {
         a2v[j].position << curr_buf[i - 3 + j * size],
             curr_buf[i - 2 + j * size], curr_buf[i - 1 + j * size];
-        a2v[j].project = project;
-        a2v[j].model = model;
-        a2v[j].view = view;
+        // a2v[j].project = project;
+        // a2v[j].model = model;
+        // a2v[j].view = view;
 
         verts[j] = shader->vertex_shader(a2v[j], v2f[j]);
       }
