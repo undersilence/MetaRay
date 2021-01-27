@@ -8,8 +8,8 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
 
 // settings
-const unsigned int SCR_WIDTH = 1280;
-const unsigned int SCR_HEIGHT = 720;
+const unsigned int SCR_WIDTH = 500;
+const unsigned int SCR_HEIGHT = 500;
 
 int main() {
   // glfw: initialize and configure
@@ -25,8 +25,7 @@ int main() {
 
   // glfw window creation
   // --------------------
-  GLFWwindow *window =
-      glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "MetaRay", NULL, NULL);
+  GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "MetaRay", NULL, NULL);
   if (window == NULL) {
     std::cout << "Failed to create GLFW window" << std::endl;
     glfwTerminate();
@@ -49,8 +48,8 @@ int main() {
     // -----
     processInput(window);
 
-    // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved
-    // etc.)
+    // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+
     // -------------------------------------------------------------------------------
     glfwSwapBuffers(window);
     glfwPollEvents();
