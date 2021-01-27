@@ -2,7 +2,7 @@
 #include <memory>
 
 #include "MTR/math_defs.h"
-#include "MTR/softras/render.h"
+#include "MTR/softras/render.hpp"
 
 typedef A2V Vertex;
 

@@ -34,3 +34,5 @@ mat4f perspective(float fovy, float aspect, float near, float far);
 mat4f ortho(float left, float right, float bottom, float top, float near,
             float far);
 mat4f look_at(const vec3f &eye, const vec3f &center, const vec3f &up);
+
+vec3f barycentric2D(float x, float y, vec4f *v);

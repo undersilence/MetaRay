@@ -1,6 +1,8 @@
 #include "MTR/math_defs.h"
 
-float clamp(float min, float max, float a) { return a > min ? (a < max ? a : max) : min; }
+float clamp(float min, float max, float a) {
+  return a > min ? (a < max ? a : max) : min;
+}
 
 float to_radius(float degree) { return degree / 180.0f * MTR_PI; }
 float to_degree(float radius) { return radius / MTR_PI * 180.0f; }
@@ -18,6 +20,30 @@ mat4f perspective(float fovy, float aspect, float near, float far) {
   return result;
 }
 
-mat4f ortho(float left, float right, float bottom, float top, float near, float far) { return {}; }
+mat4f ortho(float left, float right, float bottom, float top, float near,
+            float far) {
+  return {};
+}
 
-mat4f look_at(const vec3f &eye, const vec3f &center, const vec3f &up) { return {}; }
+mat4f look_at(const vec3f &eye, const vec3f &center, const vec3f &up) {
+  return {};
+}
+
+vec3f barycentric2D(float x, float y, vec4f *v) {
+  float c1 =
+      (x * (v[1].y() - v[2].y()) + (v[2].x() - v[1].x()) * y +
+       v[1].x() * v[2].y() - v[2].x() * v[1].y()) /
+      (v[0].x() * (v[1].y() - v[2].y()) + (v[2].x() - v[1].x()) * v[0].y() +
+       v[1].x() * v[2].y() - v[2].x() * v[1].y());
+  float c2 =
+      (x * (v[2].y() - v[0].y()) + (v[0].x() - v[2].x()) * y +
+       v[2].x() * v[0].y() - v[0].x() * v[2].y()) /
+      (v[1].x() * (v[2].y() - v[0].y()) + (v[0].x() - v[2].x()) * v[1].y() +
+       v[2].x() * v[0].y() - v[0].x() * v[2].y());
+  float c3 =
+      (x * (v[0].y() - v[1].y()) + (v[1].x() - v[0].x()) * y +
+       v[0].x() * v[1].y() - v[1].x() * v[0].y()) /
+      (v[2].x() * (v[0].y() - v[1].y()) + (v[1].x() - v[0].x()) * v[2].y() +
+       v[0].x() * v[1].y() - v[1].x() * v[0].y());
+  return {c1, c2, c3};
+}
