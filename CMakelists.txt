@@ -12,7 +12,8 @@ include_directories(include)
 set(SRCS
     src/MTR/test.cpp
     src/MTR/softras/render.cpp
-    src/MTR/softras/shader.cpp)
+    src/MTR/softras/shader.cpp
+    src/MTR/math_defs.cpp)
 
 
 set(ExecTarget ${PROJECT_NAME})

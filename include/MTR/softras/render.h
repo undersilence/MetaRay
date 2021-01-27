@@ -5,6 +5,7 @@
 class SoftRaster {
 public:
   enum Primitive { Line, Triangle };
+  enum Buffer { Color = 1, Depth = 2 };
   struct arr_buf_id {
     int arr_id = 0;
   };
@@ -15,10 +16,10 @@ public:
   explicit SoftRaster(int w, int h);
   void draw_arrays(Primitive mode = Primitive::Triangle);
   void draw_elements();
+  void clear(Buffer buffer);
 
   // void set_shader(const std::shared_ptr<SoftShader>& shader);
-  void
-  set_vertex_shader(const std::function<vec4f(A2V &, V2F &)> &VertexShader);
+  void set_vertex_shader(const std::function<vec4f(A2V &, V2F &)> &VertexShader);
   void set_fragment_shader(const std::function<vec4f(V2F &)> &FragmentShader);
 
   arr_buf_id load_array(const std::vector<float> &arr);
@@ -48,9 +49,9 @@ protected:
   // VERTEX SHADER -> MVP -> Clipping -> /.W -> VIEWPORT -> DRAWLINE/DRAWTRI ->
   // FRAGSHADER
 
-  mat4f model;
-  mat4f view;
-  mat4f project;
+  mat4f model = mat4f::Identity();
+  mat4f view = mat4f::Identity();
+  mat4f project = mat4f::Identity();
 
   // input buffer
   std::map<int, std::vector<float>> arr_bufs;

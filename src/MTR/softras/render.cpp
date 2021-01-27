@@ -1,21 +1,12 @@
 #include "MTR/softras/render.h"
 
 static vec3f barycentric2D(float x, float y, vec4f *v) {
-  float c1 =
-      (x * (v[1].y() - v[2].y()) + (v[2].x() - v[1].x()) * y +
-       v[1].x() * v[2].y() - v[2].x() * v[1].y()) /
-      (v[0].x() * (v[1].y() - v[2].y()) + (v[2].x() - v[1].x()) * v[0].y() +
-       v[1].x() * v[2].y() - v[2].x() * v[1].y());
-  float c2 =
-      (x * (v[2].y() - v[0].y()) + (v[0].x() - v[2].x()) * y +
-       v[2].x() * v[0].y() - v[0].x() * v[2].y()) /
-      (v[1].x() * (v[2].y() - v[0].y()) + (v[0].x() - v[2].x()) * v[1].y() +
-       v[2].x() * v[0].y() - v[0].x() * v[2].y());
-  float c3 =
-      (x * (v[0].y() - v[1].y()) + (v[1].x() - v[0].x()) * y +
-       v[0].x() * v[1].y() - v[1].x() * v[0].y()) /
-      (v[2].x() * (v[0].y() - v[1].y()) + (v[1].x() - v[0].x()) * v[2].y() +
-       v[0].x() * v[1].y() - v[1].x() * v[0].y());
+  float c1 = (x * (v[1].y() - v[2].y()) + (v[2].x() - v[1].x()) * y + v[1].x() * v[2].y() - v[2].x() * v[1].y()) /
+             (v[0].x() * (v[1].y() - v[2].y()) + (v[2].x() - v[1].x()) * v[0].y() + v[1].x() * v[2].y() - v[2].x() * v[1].y());
+  float c2 = (x * (v[2].y() - v[0].y()) + (v[0].x() - v[2].x()) * y + v[2].x() * v[0].y() - v[0].x() * v[2].y()) /
+             (v[1].x() * (v[2].y() - v[0].y()) + (v[0].x() - v[2].x()) * v[1].y() + v[2].x() * v[0].y() - v[0].x() * v[2].y());
+  float c3 = (x * (v[0].y() - v[1].y()) + (v[1].x() - v[0].x()) * y + v[0].x() * v[1].y() - v[1].x() * v[0].y()) /
+             (v[2].x() * (v[0].y() - v[1].y()) + (v[1].x() - v[0].x()) * v[2].y() + v[0].x() * v[1].y() - v[1].x() * v[0].y());
   return {c1, c2, c3};
 }
 
@@ -23,6 +14,8 @@ SoftRaster::SoftRaster(int w, int h) : width(w), height(h) {
   frame_buf.resize(w * h);
   depth_buf.resize(w * h);
 }
+
+SoftRaster::clear(unsigned int buffer_mask) {}
 
 void SoftRaster::draw_arrays(SoftRaster::Primitive mode) {
   printf("hello from drawArrays.\n");
@@ -40,12 +33,13 @@ void SoftRaster::draw_arrays(SoftRaster::Primitive mode) {
     for (int i = size; i < curr_buf.size(); i += 3 * stride) {
       A2V a2v[3];
       V2F v2f[3];
+
+      // verts represent clip_pos
       vec4f verts[3];
       // only configure positions for test
 
       for (int j = 0; j < 3; j++) {
-        a2v[j].position << curr_buf[i - 3 + j * size],
-            curr_buf[i - 2 + j * size], curr_buf[i - 1 + j * size];
+        a2v[j].position << curr_buf[i - 3 + j * size], curr_buf[i - 2 + j * size], curr_buf[i - 1 + j * size];
         // a2v[j].project = project;
         // a2v[j].model = model;
         // a2v[j].view = view;
@@ -62,10 +56,9 @@ void SoftRaster::draw_arrays(SoftRaster::Primitive mode) {
 
       // Viewport transformation
       for (auto &vert : verts) {
-        vert.x() = 0.5 * width * (vert.x() + 1.0);
-        vert.y() = 0.5 * height * (vert.y() + 1.0);
+        vert.x() = 0.5f * width * (vert.x() + 1.0f);
+        vert.y() = 0.5f * height * (vert.y() + 1.0f);
       }
-
       // clip here
 
       for (int j = 0; j < 3; j++) {
@@ -87,9 +80,7 @@ void SoftRaster::set_view(const mat4f &v) { view = v; }
 
 void SoftRaster::set_project(const mat4f &p) { project = p; }
 
-void SoftRaster::set_pixel(const vec2i &coord, const vec4f &color) {
-  frame_buf[width * coord.y() + coord.x()] = color;
-}
+void SoftRaster::set_pixel(const vec2i &coord, const vec4f &color) { frame_buf[width * coord.y() + coord.x()] = color; }
 
 int SoftRaster::get_index(int x, int y) { return width * y + x; }
 
@@ -121,17 +112,15 @@ void SoftRaster::rasterize_triangle(V2F v2f[3]) {
     }
   }
 
-  for (int x = bboxmin.x(); x <= bboxmax.x(); x++) {
-    for (int y = bboxmin.y(); y <= bboxmax.y(); y++) {
+  for (int x = (int)bboxmin.x(); x <= bboxmax.x(); x++) {
+    for (int y = (int)bboxmin.y(); y <= bboxmax.y(); y++) {
       // bc means barycentric coords in screen space
-      vec3f bc_screen = barycentric2D(x, y, v);
-      vec3f bc_clip(bc_screen.x() / v[0].w(), bc_screen.y() / v[1].w(),
-                    bc_screen.z() / v[2].w());
+      vec3f bc_screen = barycentric2D((float)x, (float)y, v);
+      vec3f bc_clip(bc_screen.x() / v[0].w(), bc_screen.y() / v[1].w(), bc_screen.z() / v[2].w());
       bc_clip = bc_clip / bc_clip.sum();
 
       float frag_depth = bc_clip.dot(vec3f(v[0].z(), v[1].z(), v[2].z()));
-      if (bc_screen.x() < 0 || bc_screen.y() < 0 || bc_screen.z() < 0 ||
-          depth_buf[get_index(x, y)] > frag_depth)
+      if (bc_screen.x() < 0 || bc_screen.y() < 0 || bc_screen.z() < 0 || depth_buf[get_index(x, y)] > frag_depth)
         continue;
 
       V2F payload;

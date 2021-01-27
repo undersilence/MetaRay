@@ -6,6 +6,8 @@
 #include <Eigen/SparseQR>
 #include <Eigen/StdVector>
 
+const float MTR_PI = 3.1415926535f;
+
 typedef double scalar;
 typedef unsigned long long uint64;
 
@@ -22,6 +24,9 @@ typedef Eigen::Matrix<int, 4, 1> vec4i;
 typedef Eigen::Matrix<scalar, 4, 4> mat4s;
 typedef Eigen::Matrix<float, 4, 4> mat4f;
 typedef Eigen::Matrix<int, 4, 4> mat4i;
+
+float to_degree(float radius);
+float to_radius(float degree);
 
 mat4f perspective(float fovy, float aspect, float near, float far);
 mat4f ortho(float left, float right, float bottom, float top, float near, float far);
