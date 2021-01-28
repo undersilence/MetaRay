@@ -44,8 +44,8 @@ int main() {
   raster->test();
 
   raster->set_shader(shader);
-  raster->set_project(
-      perspective(60.0f, test_width / (float)test_height, 0.1f, 50.0f));
+  raster->set_project(perspective(
+      to_radians(60.0f), test_width / (float)test_height, 0.1f, 50.0f));
 
   std::vector<Test_A2V> vertex_data;
   Test_A2V a, b, c;

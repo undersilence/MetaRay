@@ -28,12 +28,16 @@ typedef Eigen::Matrix<int, 4, 4> mat4i;
 
 float clamp(float min, float max, float a);
 
-float to_degree(float radius);
-float to_radius(float degree);
+float to_degrees(float radius);
+float to_radians(float degree);
 
 mat4f perspective(float fovy, float aspect, float near, float far);
 mat4f ortho(float left, float right, float bottom, float top, float near,
             float far);
 mat4f look_at(const vec3f &eye, const vec3f &center, const vec3f &up);
+
+mat4f translate_mat(float offset_x, float offset_y, float offset_z);
+mat4f rotate_mat(const vec3f &pivot, float angle);
+mat4f scale_mat(float s_x, float s_y, float s_z);
 
 vec3f barycentric2D(float x, float y, vec4f *v);

@@ -58,16 +58,24 @@ int main() {
   raster->test();
 
   raster->set_shader(shader);
-  raster->set_project(
-      perspective(60.0f, test_width / (float)test_height, 0.1f, 50.0f));
+  raster->set_project(perspective(
+      to_radians(60.0f), test_width / (float)test_height, 0.1f, 50.0f));
 
   std::vector<Test_A2V> vertex_data;
   Test_A2V a, b, c;
   a.position << 0.5f, 0.5f, 1.5f;
-  a.color << 1.0f, 0.0f, 0.0f;
+  a.color << 0.5f, 0.0f, 0.0f;
   b.position << -0.5f, 0.5f, 2.0f;
-  b.color << 0.0f, 1.0f, 0.0f;
+  b.color << 0.0f, 0.5f, 0.0f;
   c.position << 0.5f, -0.5f, 2.5f;
+  c.color << 0.0f, 1.0f, 1.0f;
+  vertex_data.insert(vertex_data.end(), {a, b, c});
+
+  a.position << 0.5f, 0.5f, 1.0f;
+  a.color << 0.1f, 0.0f, 0.0f;
+  b.position << 0.0f, 0.5f, 1.0f;
+  b.color << 0.0f, 0.1f, 0.0f;
+  c.position << 0.5f, 0.0f, 1.5f;
   c.color << 0.0f, 0.0f, 1.0f;
   vertex_data.insert(vertex_data.end(), {a, b, c});
 
@@ -161,11 +169,13 @@ int main() {
   // int width, height, nrChannels;
   // The FileSystem::getPath(...) is part of the GitHub repository so we can
   // find files on any IDE/platform; replace it with your own image path.
-  raster->draw_arrays(buffer_id);
-  auto& frame_buffer = raster->encode_frame_buffer();
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, test_width, test_height, 0, GL_RGBA,
-               GL_UNSIGNED_BYTE, frame_buffer.data());
-  glGenerateMipmap(GL_TEXTURE_2D);
+
+  // raster->draw_arrays(buffer_id);
+  // auto& frame_buffer = raster->encode_frame_buffer();
+  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, test_width, test_height, 0,
+  // GL_RGBA,
+  //              GL_UNSIGNED_BYTE, frame_buffer.data());
+  // glGenerateMipmap(GL_TEXTURE_2D);
 
   double lastTime = glfwGetTime();
   int nbFrames = 0;
@@ -199,12 +209,12 @@ int main() {
     raster->clear(SoftRaster<Test_A2V, Test_V2F>::Buffer::Color |
                   SoftRaster<Test_A2V, Test_V2F>::Buffer::Depth);
     raster->draw_arrays(buffer_id);
-    frame_buffer = raster->encode_frame_buffer();
+    // frame_buffer = raster->encode_frame_buffer();
 
     // bind Texture
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, test_width, test_height, 0, GL_RGBA,
-                 GL_UNSIGNED_BYTE, frame_buffer.data());
+                 GL_FLOAT, raster->frame_buffer().data());
 
     // render container
     ourShader.use();

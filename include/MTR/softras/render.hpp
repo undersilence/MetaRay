@@ -38,8 +38,8 @@ class SoftRaster {
   void set_view(const mat4f &v);
   void set_project(const mat4f &p);
   void set_pixel(const vec2i &coord, const vec4f &color);
-  std::vector<uchar> &encode_frame_buffer();
 
+  std::vector<uchar> &encode_frame_buffer();
   std::vector<vec4f> &frame_buffer() { return frame_buf; }
   std::vector<float> &depth_buffer() { return depth_buf; }
 
