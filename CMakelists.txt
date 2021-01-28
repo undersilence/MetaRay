@@ -5,14 +5,17 @@ project(MetaRay)
 set(CMAKE_CXX_STANDARD 17)
 
 include_directories(include)
+include_directories(deps)
 
 # aux_source_directory(src/MTR MTR_SRCS)
 # aux_source_directory(src SRCS)
 
 set(SRCS
-    src/MTR/test.cpp
-    src/MTR/math_defs.cpp)
+    src/glad.c
+    src/MTR/math_defs.cpp
+    src/GUI/app.cpp)
 
+message(${SRCS})
 
 set(ExecTarget ${PROJECT_NAME})
 add_executable(${ExecTarget} ${SRCS})

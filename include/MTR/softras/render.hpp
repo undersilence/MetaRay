@@ -19,7 +19,7 @@ class SoftRaster {
   explicit SoftRaster(int w, int h);
   void draw_arrays(arr_buf_id arr_id, Primitive mode = Primitive::Triangle);
   void draw_elements(ind_buf_id buf_id, Primitive mode = Primitive::Triangle);
-  void clear(Buffer buffer);
+  void clear(int buffer_mask);
 
   // void set_shader(const std::shared_ptr<SoftShader>& shader);
   // void set_vertex_shader(const std::function<vec4f(A2V &, V2F &)>
@@ -38,6 +38,7 @@ class SoftRaster {
   void set_view(const mat4f &v);
   void set_project(const mat4f &p);
   void set_pixel(const vec2i &coord, const vec4f &color);
+  std::vector<uchar> &encode_frame_buffer();
 
   std::vector<vec4f> &frame_buffer() { return frame_buf; }
   std::vector<float> &depth_buffer() { return depth_buf; }
@@ -65,6 +66,7 @@ class SoftRaster {
   std::map<int, std::vector<int>> ind_bufs;
 
   // output buffer
+  std::vector<uchar> encode_frame_buf;
   std::vector<vec4f> frame_buf;
   std::vector<float> depth_buf;
 };
@@ -72,12 +74,13 @@ class SoftRaster {
 template <class TApp2Vert, class TVert2Frag>
 SoftRaster<TApp2Vert, TVert2Frag>::SoftRaster(int w, int h)
     : width(w), height(h) {
+  encode_frame_buf.resize(4 * w * h);
   frame_buf.resize(w * h);
   depth_buf.resize(w * h);
 }
 
 template <class TApp2Vert, class TVert2Frag>
-void SoftRaster<TApp2Vert, TVert2Frag>::clear(SoftRaster::Buffer buffer_mask) {
+void SoftRaster<TApp2Vert, TVert2Frag>::clear(int buffer_mask) {
   if (buffer_mask & SoftRaster::Buffer::Color) {
     std::fill(frame_buf.begin(), frame_buf.end(), vec4f::Zero());
   }
@@ -94,7 +97,7 @@ void SoftRaster<TApp2Vert, TVert2Frag>::draw_arrays(
     // add some log here
     return;
   }
-  printf("hello from drawArrays.\n");
+  // printf("hello from drawArrays.\n");
   // draw triangles [0, pos_buf)
   // int size = 3;
   // int stride = 3;
@@ -196,6 +199,17 @@ SoftRaster<TApp2Vert, TVert2Frag>::load_indices(const std::vector<int> &inds) {
 }
 
 template <class TApp2Vert, class TVert2Frag>
+std::vector<uchar> &SoftRaster<TApp2Vert, TVert2Frag>::encode_frame_buffer() {
+  for (auto i = 0; i < width * height; i++) {
+    encode_frame_buf[(i << 2) + 0] = (uchar)(255.0f * frame_buf[i].x());
+    encode_frame_buf[(i << 2) + 1] = (uchar)(255.0f * frame_buf[i].y());
+    encode_frame_buf[(i << 2) + 2] = (uchar)(255.0f * frame_buf[i].z());
+    encode_frame_buf[(i << 2) + 3] = (uchar)(255.0f * frame_buf[i].w());
+  }
+  return encode_frame_buf;
+}
+
+template <class TApp2Vert, class TVert2Frag>
 void SoftRaster<TApp2Vert, TVert2Frag>::rasterize_triangle(TVert2Frag v2f[3],
                                                            vec4f clip_pos[3]) {
   // vec4f v[3] = {v2f[0].screen_pos, v2f[1].screen_pos, v2f[2].screen_pos};
@@ -229,7 +243,8 @@ void SoftRaster<TApp2Vert, TVert2Frag>::rasterize_triangle(TVert2Frag v2f[3],
       // printf("size of payload v2f: %d\n", sizeof(V2F));
       auto color =
           shader->fragment_shader(shader->interpolate_attr(v2f, bc_clip));
-      frame_buf[get_index(x, y)] = color;
+
+      set_pixel(vec2i(x, y), color);
       depth_buf[get_index(x, y)] = frag_depth;
     }
   }

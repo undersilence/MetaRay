@@ -34,7 +34,7 @@ class IShader {
 
   virtual vec4f vertex_shader(App2Vert &a2v, Vert2Frag &v2f) = 0;
   virtual vec4f fragment_shader(Vert2Frag &v2f) = 0;
-  virtual V2F interpolate_attr(V2F *v2f, vec3f bc_weight) = 0;
+  virtual Vert2Frag interpolate_attr(Vert2Frag *v2f, vec3f bc_weight) = 0;
 };
 
 template <class vecXf>

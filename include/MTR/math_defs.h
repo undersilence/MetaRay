@@ -10,6 +10,7 @@ const float MTR_PI = 3.1415926535f;
 
 typedef double scalar;
 typedef unsigned long long uint64;
+typedef unsigned char uchar;
 
 typedef Eigen::Matrix<scalar, 2, 1> vec2s;
 typedef Eigen::Matrix<float, 2, 1> vec2f;
