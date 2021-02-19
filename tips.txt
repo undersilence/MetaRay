@@ -1,0 +1,12 @@
+需要实现的 features
+（一整个软渲染器更多的带有教学性质，本身并没有什么用）
+
+0. Texture2D 类的实现
+1. 支持 Mesh, Model 类的渲染（pos, uv, textures, normals, ...）
+2. 支持 Scene 类集成，初步拥有 Scripts 能力 （json文件表示场景）
+3. 支持 Renderer 切换 OpenGL
+4. 支持 Editor 界面，接入 ImGui （初步通过OpenGL+glfw+imgui实现）
+
+
+note:
+0. 为了支持跨平台，OpenGL也挺不错，Vulkan学习成本有点高

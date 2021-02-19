@@ -113,7 +113,7 @@ int main() {
 
   // build and compile our shader zprogram
   // ------------------------------------
-  Shader ourShader("src/shaders/quad.vs", "src/shaders/quad.fs");
+  Shader ourShader("../shaders/quad.vs", "../shaders/quad.fs");
 
   // set up vertex data (and buffer(s)) and configure vertex attributes
   // ------------------------------------------------------------------

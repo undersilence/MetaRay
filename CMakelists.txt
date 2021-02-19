@@ -5,20 +5,34 @@ project(MetaRay)
 set(CMAKE_CXX_STANDARD 17)
 
 include_directories(include)
-include_directories(deps)
+include_directories(external/glad/include)
 
 # aux_source_directory(src/MTR MTR_SRCS)
 # aux_source_directory(src SRCS)
+# set(SPECIFIC_OUTPUT_DIR "${CMAKE_BUILD_TYPE}")
+set(LIBRARY_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/bin")
+set(EXECUTABLE_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/bin")
+
+file(GLOB SHADERS
+    shaders/*.fs
+    shaders/*.vs
+    shaders/*.gs)
+
+# message(${LIBRARY_OUTPUT_PATH})
+file(COPY ${SHADERS} DESTINATION ${LIBRARY_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}/shaders)
+
+add_subdirectory(external/glad)
 
 set(SRCS
-    src/glad.c
     src/MTR/math_defs.cpp
     src/GUI/app.cpp)
 
-message(${SRCS})
+# message(${SRCS})
 
 set(ExecTarget ${PROJECT_NAME})
 add_executable(${ExecTarget} ${SRCS})
+
+target_link_libraries(${ExecTarget} PRIVATE glad)
 
 find_package(jsoncpp CONFIG REQUIRED)
 target_link_libraries(${ExecTarget} PRIVATE jsoncpp_lib jsoncpp_object)
@@ -34,3 +48,4 @@ target_link_libraries(${ExecTarget} PRIVATE imgui::imgui)
 
 find_package(spdlog CONFIG REQUIRED)
 target_link_libraries(${ExecTarget} PRIVATE spdlog::spdlog spdlog::spdlog_header_only)
+
