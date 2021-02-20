@@ -18,11 +18,11 @@ struct V2F {
 };
 
 // virtual class for payload(vertex, fragment) struct reflection
-template <class App2Vert, class Vert2Frag>
+template <class Arr2Vert, class Vert2Frag>
 class IShader {
  public:
-  App2Vert arr2vert_cls;
-  Vert2Frag vert2frag_cls;
+  static Arr2Vert arr2vert_t() { return Arr2Vert(); };
+  static Vert2Frag vert2frag_t() { return Vert2Frag(); };
 
   // MTR_GENERATE_TUPLE_CONVERTION(arr2vert_cls);
   // MTR_GENERATE_TUPLE_CONVERTION(vert2frag_cls);
@@ -32,9 +32,10 @@ class IShader {
   mat4f view;
   mat4f model;
 
-  virtual vec4f vertex_shader(App2Vert &a2v, Vert2Frag &v2f) = 0;
+  virtual vec4f vertex_shader(Arr2Vert &a2v, Vert2Frag &v2f) = 0;
   virtual vec4f fragment_shader(Vert2Frag &v2f) = 0;
   virtual Vert2Frag interpolate_attr(Vert2Frag *v2f, vec3f bc_weight) = 0;
+  virtual std::string tag() { return "IShader"; };
 };
 
 template <class vecXf>

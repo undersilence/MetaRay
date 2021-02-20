@@ -20,7 +20,7 @@ struct Test_V2F {
 class Test_Shader : public IShader<Test_A2V, Test_V2F> {
  public:
   vec3f offset;
-  virtual vec4f vertex_shader(Test_A2V& a2v, Test_V2F& v2f) {
+  virtual vec4f vertex_shader(Test_A2V& a2v, Test_V2F& v2f) override {
     v2f.color = a2v.color;
     // v2f.view_pos = (a2v.model * a2v.view * position).head<3>();
 
@@ -28,7 +28,7 @@ class Test_Shader : public IShader<Test_A2V, Test_V2F> {
     position << a2v.position + offset, 1.0f;
     return project * model * view * position;
   }
-  virtual vec4f fragment_shader(Test_V2F& v2f) {
+  virtual vec4f fragment_shader(Test_V2F& v2f) override {
     vec4f result;
     result << v2f.color, 1.0f;
     return result;
@@ -52,12 +52,10 @@ char window_title[256] = {"MetaRay fps "};
 int main() {
   int test_width = SCR_WIDTH, test_height = SCR_HEIGHT;
   auto shader = std::make_shared<Test_Shader>();
-  auto raster = std::make_shared<SoftRaster<decltype(shader->arr2vert_cls),
-                                            decltype(shader->vert2frag_cls)>>(
-      test_width, test_height);
+  auto raster = std::make_shared<SoftRaster>(test_width, test_height);
   raster->test();
 
-  raster->set_shader(shader);
+  // raster->set_shader(shader);
   raster->set_project(perspective(
       to_radians(60.0f), test_width / (float)test_height, 0.1f, 50.0f));
 
@@ -79,7 +77,7 @@ int main() {
   c.color << 0.0f, 0.0f, 1.0f;
   vertex_data.insert(vertex_data.end(), {a, b, c});
 
-  auto buffer_id = raster->load_array(vertex_data);
+  // auto buffer_id = raster->load_array(vertex_data);
 
   // glfw: initialize and configure
   // ------------------------------
@@ -206,9 +204,8 @@ int main() {
     float curr_time = glfwGetTime();
     shader->offset =
         vec3f(0.5f * sinf(curr_time), 0.5f * cosf(curr_time), 0.0f);
-    raster->clear(SoftRaster<Test_A2V, Test_V2F>::Buffer::Color |
-                  SoftRaster<Test_A2V, Test_V2F>::Buffer::Depth);
-    raster->draw_arrays(buffer_id);
+    raster->clear(SoftRaster::Buffer::Color | SoftRaster::Buffer::Depth);
+    raster->draw_arrays(vertex_data, shader);
     // frame_buffer = raster->encode_frame_buffer();
 
     // bind Texture

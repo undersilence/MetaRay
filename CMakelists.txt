@@ -19,13 +19,13 @@ file(GLOB SHADERS
     shaders/*.gs)
 
 # message(${LIBRARY_OUTPUT_PATH})
-file(COPY ${SHADERS} DESTINATION ${LIBRARY_OUTPUT_PATH}/${CMAKE_BUILD_TYPE}/shaders)
+file(COPY ${SHADERS} DESTINATION ${EXECUTABLE_OUTPUT_DIRECTORY}${CMAKE_BUILD_TYPE}/shaders)
 
 add_subdirectory(external/glad)
 
 set(SRCS
     src/MTR/math_defs.cpp
-    src/GUI/app.cpp)
+    src/MTR/test.cpp)
 
 # message(${SRCS})
 
@@ -34,8 +34,8 @@ add_executable(${ExecTarget} ${SRCS})
 
 target_link_libraries(${ExecTarget} PRIVATE glad)
 
-find_package(jsoncpp CONFIG REQUIRED)
-target_link_libraries(${ExecTarget} PRIVATE jsoncpp_lib jsoncpp_object)
+# find_package(jsoncpp CONFIG REQUIRED)
+# target_link_libraries(${ExecTarget} PRIVATE jsoncpp_lib jsoncpp_object)
 
 find_package(glfw3 CONFIG REQUIRED)
 target_link_libraries(${ExecTarget} PRIVATE glfw)
@@ -43,9 +43,9 @@ target_link_libraries(${ExecTarget} PRIVATE glfw)
 find_package(Eigen3 CONFIG REQUIRED)
 target_link_libraries(${ExecTarget} PRIVATE Eigen3::Eigen)
 
-find_package(imgui CONFIG REQUIRED)
-target_link_libraries(${ExecTarget} PRIVATE imgui::imgui)
+# find_package(imgui CONFIG REQUIRED)
+# target_link_libraries(${ExecTarget} PRIVATE imgui::imgui)
 
-find_package(spdlog CONFIG REQUIRED)
-target_link_libraries(${ExecTarget} PRIVATE spdlog::spdlog spdlog::spdlog_header_only)
+# find_package(spdlog CONFIG REQUIRED)
+# target_link_libraries(${ExecTarget} PRIVATE spdlog::spdlog spdlog::spdlog_header_only)
 
