@@ -102,6 +102,10 @@ void SoftRaster::draw_arrays(const std::vector<TArr2Vert> &vertex_arr,
   // draw triangles [0, pos_buf)
   // int size = 3;
   // int stride = 3;
+  using TVert2Frag = decltype(shader->vert2frag_t());
+
+  static_assert(std::is_base_of<IShader<TArr2Vert, TVert2Frag>, TShader>::value,
+                "Shader dismatch TArr2Vert");
 
   auto mvp = project * view * model;
   shader->project = project;
@@ -112,10 +116,10 @@ void SoftRaster::draw_arrays(const std::vector<TArr2Vert> &vertex_arr,
     auto &curr_buf = vertex_arr;
     for (int i = 0; i < curr_buf.size(); i += 3) {
       TArr2Vert a2v[3] = {curr_buf[i], curr_buf[i + 1], curr_buf[i + 2]};
-      decltype(shader->vert2frag_t()) v2f[3];
+      TVert2Frag v2f[3];
 
-      printf(" draw with shader: %s, size of A2V, V2F: %d, %d\n",
-             shader->tag().c_str(), (int)sizeof(TArr2Vert),
+      printf(" draw with shader: %s::%s size of A2V, V2F: %d, %d\n",
+             (shader->tag()).c_str(), __func__, (int)sizeof(TArr2Vert),
              (int)sizeof(shader->vert2frag_t()));
 
       // verts represent clip_pos
@@ -196,6 +200,11 @@ void SoftRaster::rasterize_triangle(TVert2Frag v2f[3], vec4f clip_pos[3],
                                     const std::shared_ptr<TShader> &shader) {
   // vec4f v[3] = {v2f[0].screen_pos, v2f[1].screen_pos, v2f[2].screen_pos};
   // vec4f view_pos[3] = {v2f[0].view_pos, v2f[1].view_pos, v2f[2].view_pos};
+
+  using TArr2Vert = decltype(shader->arr2vert_t());
+  static_assert(std::is_base_of<IShader<TArr2Vert, TVert2Frag>, TShader>::value,
+                "Shader dismatch TVert2Frag");
+
   vec4f *v = clip_pos;
   vec2f bboxmin(v[0].x(), v[0].y());
   vec2f bboxmax(v[0].x(), v[0].y());
