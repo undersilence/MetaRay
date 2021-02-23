@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
+set(CMAKE_CXX_STANDARD 17)
 
 project(MetaRay)
-
-set(CMAKE_CXX_STANDARD 17)
 
 include_directories(include)
 include_directories(external/glad/include)
@@ -21,27 +20,33 @@ file(GLOB SHADERS
 # message(${LIBRARY_OUTPUT_PATH})
 file(COPY ${SHADERS} DESTINATION ${EXECUTABLE_OUTPUT_DIRECTORY}${CMAKE_BUILD_TYPE}/shaders)
 
-add_subdirectory(external/glad)
+# add_library(MetaRay MTR/math_defs.cpp)
 
-set(SRCS
-    src/MTR/math_defs.cpp
-    src/MTR/test.cpp)
+add_subdirectory(external/glad)
+add_subdirectory(src/MTR)
+add_subdirectory(src/examples)
+
+
+
+# set(SRCS
+#     src/MTR/math_defs.cpp
+#     main.cpp)
 
 # message(${SRCS})
 
-set(ExecTarget ${PROJECT_NAME})
-add_executable(${ExecTarget} ${SRCS})
+# set(ExecTarget ${PROJECT_NAME})
+# add_executable(${ExecTarget} ${SRCS})
 
-target_link_libraries(${ExecTarget} PRIVATE glad)
+# target_link_libraries(${ExecTarget} PRIVATE glad)
 
 # find_package(jsoncpp CONFIG REQUIRED)
 # target_link_libraries(${ExecTarget} PRIVATE jsoncpp_lib jsoncpp_object)
 
-find_package(glfw3 CONFIG REQUIRED)
-target_link_libraries(${ExecTarget} PRIVATE glfw)
+# find_package(glfw3 CONFIG REQUIRED)
+# target_link_libraries(${ExecTarget} PRIVATE glfw)
 
-find_package(Eigen3 CONFIG REQUIRED)
-target_link_libraries(${ExecTarget} PRIVATE Eigen3::Eigen)
+# find_package(Eigen3 CONFIG REQUIRED)
+# target_link_libraries(${ExecTarget} PRIVATE Eigen3::Eigen)
 
 # find_package(imgui CONFIG REQUIRED)
 # target_link_libraries(${ExecTarget} PRIVATE imgui::imgui)

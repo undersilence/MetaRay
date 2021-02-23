@@ -4,6 +4,8 @@
 #include "MTR/math_defs.h"
 #include "MTR/rasterizer.hpp"
 
+using namespace mtr;
+
 struct Test_A2V {
   vec3f position;
   vec3f color;
@@ -30,12 +32,14 @@ class Test_Shader1 : public IShader<Test_A2V, Test_V2F> {
     return result;
   }
 
-  virtual Test_V2F interpolate_attr(Test_V2F *v2f, vec3f bc_weight) override {
-    Test_V2F result;
-    result.color = bc_interpolate_attr(v2f[0].color, v2f[1].color, v2f[2].color,
-                                       bc_weight);
-    return result;
-  }
+  // virtual Test_V2F interpolate_attr(Test_V2F *v2f, vec3f bc_weight) override
+  // {
+  //   Test_V2F result;
+  //   result.color = bc_interpolate_attr(v2f[0].color, v2f[1].color,
+  //   v2f[2].color,
+  //                                      bc_weight);
+  //   return result;
+  // }
 
   virtual std::string tag() override { return "Test_Shader1"; }
 };
@@ -57,12 +61,13 @@ class Test_Shader2 : public IShader<Test_A2V, V2F> {
     return result;
   }
 
-  virtual V2F interpolate_attr(V2F *v2f, vec3f bc_weight) override {
-    V2F result;
-    result.color = bc_interpolate_attr(v2f[0].color, v2f[1].color, v2f[2].color,
-                                       bc_weight);
-    return result;
-  }
+  // virtual V2F interpolate_attr(V2F *v2f, vec3f bc_weight) override {
+  //   V2F result;
+  //   result.color = bc_interpolate_attr(v2f[0].color, v2f[1].color,
+  //   v2f[2].color,
+  //                                      bc_weight);
+  //   return result;
+  // }
 
   virtual std::string tag() override { return "Test_Shader2"; }
 };

@@ -9,7 +9,7 @@ float to_degrees(float radius) { return radius / MTR_PI * 180.0f; }
 
 // define reversed-z perspective projection
 mat4f perspective(float fovy, float aspect, float near, float far) {
-  const float tan_half_fovy = std::tanf(fovy * 0.5f);
+  const float tan_half_fovy = std::tan(fovy * 0.5f);
 
   mat4f result = mat4f::Zero();
   result(0, 0) = 1.0f / (aspect * tan_half_fovy);

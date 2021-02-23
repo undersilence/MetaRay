@@ -8,6 +8,8 @@
 #include "GUI/shader.h"
 #include "MTR/rasterizer.hpp"
 
+using namespace mtr;
+
 struct Test_A2V {
   vec3f position;
   vec3f color;
@@ -31,12 +33,6 @@ class Test_Shader : public IShader<Test_A2V, Test_V2F> {
   virtual vec4f fragment_shader(Test_V2F& v2f) override {
     vec4f result;
     result << v2f.color, 1.0f;
-    return result;
-  }
-  virtual Test_V2F interpolate_attr(Test_V2F* v2f, vec3f bc_weight) {
-    Test_V2F result;
-    result.color = bc_interpolate_attr(v2f[0].color, v2f[1].color, v2f[2].color,
-                                       bc_weight);
     return result;
   }
 };

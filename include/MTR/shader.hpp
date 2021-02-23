@@ -3,6 +3,7 @@
 #include "MTR/core.h"
 #include "MTR/math_defs.h"
 
+namespace mtr {
 struct A2V {
   vec3f position;
   // vec2f tex_coords;
@@ -34,7 +35,7 @@ class IShader {
 
   virtual vec4f vertex_shader(Arr2Vert &a2v, Vert2Frag &v2f) = 0;
   virtual vec4f fragment_shader(Vert2Frag &v2f) = 0;
-  virtual Vert2Frag interpolate_attr(Vert2Frag *v2f, vec3f bc_weight) = 0;
+  // virtual Vert2Frag interpolate_attr(Vert2Frag *v2f, vec3f bc_weight) = 0;
   virtual std::string tag() { return "IShader"; };
 };
 
@@ -61,12 +62,15 @@ class SoftShader : public IShader<A2V, V2F> {
     return project * model * view * position;
   }
   virtual vec4f fragment_shader(V2F &v2f) override { return v2f.color; }
-  virtual V2F interpolate_attr(V2F *v2f, vec3f bc_weight) override {
-    V2F result;
-    // result.color = bc_interpolate_attr(v2f[0].color, v2f[1].color,
-    // v2f[2].color, bc_weight);
-    result.color = v2f[0].color * bc_weight(0) + v2f[1].color * bc_weight(1) +
-                   v2f[2].color * bc_weight(2);
-    return result;
-  }
+  // virtual V2F interpolate_attr(V2F *v2f, vec3f bc_weight) override {
+  //   V2F result;
+  //   // result.color = bc_interpolate_attr(v2f[0].color, v2f[1].color,
+  //   // v2f[2].color, bc_weight);
+  //   result.color = v2f[0].color * bc_weight(0) + v2f[1].color * bc_weight(1)
+  //   +
+  //                  v2f[2].color * bc_weight(2);
+  //   return result;
+  // }
 };
+
+}  // namespace mtr
