@@ -24,6 +24,7 @@ file(COPY ${SHADERS} DESTINATION ${EXECUTABLE_OUTPUT_DIRECTORY}${CMAKE_BUILD_TYP
 
 add_subdirectory(external/glad)
 add_subdirectory(src/MTR)
+add_subdirectory(src/MPM)
 add_subdirectory(src/examples)
 
 
