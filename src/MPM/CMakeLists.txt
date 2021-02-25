@@ -1,7 +1,7 @@
 project(MaterialPointMethod)
 
 
-add_executable(MPM main.cpp mpm_sim.cpp mpm_utils.cpp)
+add_executable(MPM main.cpp mpm_sim.cpp mpm_utils.cpp mpm_defs.cpp)
 
 
 find_package(Eigen3 CONFIG REQUIRED) 
