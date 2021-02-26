@@ -18,8 +18,9 @@ class MPMSim {
   // void grid_initialize();
   // void particle_initialize();
   void substep(float dt);
+  bool export_result(const std::string& export_path, int curr_frame);
 
- public:
+ private:
   SimInfo sim_info;
   std::vector<Particle> particles;
   std::vector<GridAttr> grid_attrs;
@@ -37,10 +38,11 @@ class MPMSim {
   void update_grid_velocity(float dt);
   void update_F(float dt);
   void transfer_G2P();
+  void advection(float dt);
 
   // handle collision
-  void solve_paritcle_collision();
-  void solve_grid_collision();
-  void solve_grid_boundary();
+  // void solve_paritcle_collision();
+  // void solve_grid_collision();
+  void solve_grid_boundary(int thickness = 2);
 };
 }  // namespace mpm

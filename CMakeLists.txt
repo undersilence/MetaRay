@@ -5,12 +5,26 @@ project(MetaRay)
 
 include_directories(include)
 include_directories(external/glad/include)
+include_directories(external/partio/src/lib)
+include_directories(external/spdlog/include)
 
 # aux_source_directory(src/MTR MTR_SRCS)
 # aux_source_directory(src SRCS)
 # set(SPECIFIC_OUTPUT_DIR "${CMAKE_BUILD_TYPE}")
 set(LIBRARY_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/bin")
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/bin")
+
+if(MSVC)
+    # Force to always compile with W4
+    if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+        string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    else()
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+    endif()
+elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+    # Update if necessary
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -pedantic")
+endif()
 
 file(GLOB SHADERS
     shaders/*.fs
@@ -23,6 +37,9 @@ file(COPY ${SHADERS} DESTINATION ${EXECUTABLE_OUTPUT_DIRECTORY}${CMAKE_BUILD_TYP
 # add_library(MetaRay MTR/math_defs.cpp)
 
 add_subdirectory(external/glad)
+add_subdirectory(external/partio)
+add_subdirectory(external/spdlog)
+
 add_subdirectory(src/MTR)
 add_subdirectory(src/MPM)
 add_subdirectory(src/examples)

@@ -9,6 +9,10 @@
 #include <iostream>
 #include <tuple>
 
+#include "spdlog/fmt/ostr.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/spdlog.h"
+
 using namespace Eigen;
 
 namespace mpm {
@@ -37,8 +41,9 @@ struct SimInfo {
   int grid_l;
 
   // simulation factors
-  float E = 50.0f;  // Young's modules
-  float nu = 0.3f;  // Possion ratio
+  float E = 50.0f;      // Young's modules
+  float nu = 0.3f;      // Possion ratio
+  float alpha = 0.95f;  // 0.95 flip/pic
 
   float particle_density;
   float particle_mass;
@@ -50,4 +55,27 @@ struct SimInfo {
 
 Matrix3f neohookean_piola(float E, float nu, const Matrix3f& F);
 
+// define logger
+class MPMLog {
+ public:
+  static void init();
+  MPMLog() = default;
+  virtual ~MPMLog() = default;
+
+  inline static const std::shared_ptr<spdlog::logger>& get_logger() {
+    return s_logger;
+  }
+
+ private:
+  static std::shared_ptr<spdlog::logger> s_logger;
+};
+
+// Client log macros
+#define MPM_FATAL(...) MPMLog::get_logger()->fatal(__VA_ARGS__)
+#define MPM_ERROR(...) MPMLog::get_logger()->error(__VA_ARGS__)
+#define MPM_WARN(...) MPMLog::get_logger()->warn(__VA_ARGS__)
+#define MPM_INFO(...) MPMLog::get_logger()->info(__VA_ARGS__)
+#define MPM_TRACE(...) MPMLog::get_logger()->trace(__VA_ARGS__)
+
+#define MPM_ASSERT(...) assert(__VA_ARGS__)
 }  // namespace mpm
