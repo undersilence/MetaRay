@@ -19,7 +19,7 @@ class MPMSim {
   // void particle_initialize();
   void substep(float dt);
 
- protected:
+ public:
   SimInfo sim_info;
   std::vector<Particle> particles;
   std::vector<GridAttr> grid_attrs;
@@ -27,17 +27,20 @@ class MPMSim {
   // storage the degrees of freedoms
   std::vector<int> active_nodes;
 
+  void prestep();
   void transfer_P2G();
   void add_gravity();
   // TODO: support variety
-  void update_grid_force(
-      std::function<Matrix3f(const Matrix3f&)> constitutive_model);
+  //  E : float, nu : float, F : Matrix3f
+  void update_grid_force(std::function<Matrix3f(float, float, const Matrix3f&)>
+                             constitutive_model);
   void update_grid_velocity(float dt);
-  void update_F();
+  void update_F(float dt);
   void transfer_G2P();
 
   // handle collision
-  void paritcle_collision();
-  void grid_collision();
+  void solve_paritcle_collision();
+  void solve_grid_collision();
+  void solve_grid_boundary();
 };
 }  // namespace mpm

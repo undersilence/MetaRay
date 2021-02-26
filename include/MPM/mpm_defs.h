@@ -48,6 +48,6 @@ struct SimInfo {
   float h;
 };
 
-Matrix3f neohookean_piola(const Matrix3f& F)
+Matrix3f neohookean_piola(float E, float nu, const Matrix3f& F);
 
 }  // namespace mpm

@@ -99,7 +99,7 @@ void MPMSim::add_gravity() {
 }
 
 void MPMSim::update_grid_force(
-    std::function<Matrix3f(const Matrix3f&)> constitutive_model) {
+    std::function<Matrix3f(float, float, const Matrix3f&)> constitutive_model) {
   // update grid forcing from particles F(deformation gradients)
   for (int iter = 0; iter < sim_info.particle_size; iter++) {
     auto F = particles[iter].F;
@@ -107,7 +107,7 @@ void MPMSim::update_grid_force(
     auto h = sim_info.h;
 
     // use constitutive_model
-    Matrix3f piola = constitutive_model(F);
+    Matrix3f piola = constitutive_model(sim_info.E, sim_info.nu, F);
 
     auto [base_node, wp, dwp] =
         quatratic_interpolation(particles[iter].pos_p / h);
@@ -128,6 +128,20 @@ void MPMSim::update_grid_force(
   }
 }
 
-void update_grid_velocity(float dt) {}
+void MPMSim::update_grid_velocity(float dt) {
+  for (int i = 0; i < active_nodes.size(); i++) {
+    int index = active_nodes[i];
+    // vel_n+1 = vel_n + f_i / m_i * dt
+    grid_attrs[index].vel_i =
+        grid_attrs[index].vel_in +
+        grid_attrs[index].force_i / grid_attrs[index].mass_i * dt;
+  }
+}
+
+void MPMSim::update_F(float dt) {}
+
+void MPMSim::transfer_G2P() {}
+
+void MPMSim::solve_grid_boundary() {}
 
 }  // namespace mpm
