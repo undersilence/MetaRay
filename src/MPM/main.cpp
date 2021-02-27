@@ -13,7 +13,7 @@ void quatratic_test() {
   int W = 1.0f / h + 1;
   int H = 1.0f / h + 1;
   int L = 1.0f / h + 1;
-  Vector3f pos(0.321932, 0.452119, 0.434341);
+  Vector3f pos(0.648932, 0.121521, 0.265484);
   auto [base_node, wp, dwp] = mpm::quatratic_interpolation(pos / h);
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 3; j++)

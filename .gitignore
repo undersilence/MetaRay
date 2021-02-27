@@ -33,6 +33,7 @@
 
 
 # Output directory
+render/
 output/*
 bin
 build

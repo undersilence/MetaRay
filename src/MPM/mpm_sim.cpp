@@ -9,9 +9,11 @@ void MPMSim::mpm_demo() {
   float mass = 10.0f;
   Vector3f gravity{0.0f, -9.8f, 0.0f};
   Vector3f area{1.0f, 1.0f, 1.0f};
+  Vector3f velocity{-0.5f, 0.5f, -0.3f};
   float h = 0.02f;
 
-  mpm_initialize(density, mass, "../models/small_cube.obj", gravity, area, h);
+  mpm_initialize(density, mass, "../models/small_cube.obj", velocity, gravity,
+                 area, h);
 
   int frame_rate = 60;
   float dt = 1e-4f;
@@ -228,9 +230,9 @@ void MPMSim::update_F(float dt) {
       for (int j = 0; j < 3; j++)
         for (int k = 0; k < 3; k++) {
           Vector3i curr_node = base_node + Vector3i(i, j, k);
-          Vector3f grad_wip(dwp(i, 0) * wp(j, 1) * wp(k, 2) / h,
+          Vector3f grad_wip{dwp(i, 0) * wp(j, 1) * wp(k, 2) / h,
                             wp(i, 0) * dwp(j, 1) * wp(k, 2) / h,
-                            wp(i, 0) * wp(j, 1) * dwp(k, 2) / h);
+                            wp(i, 0) * wp(j, 1) * dwp(k, 2) / h};
 
           auto index = curr_node.x() * sim_info.grid_h * sim_info.grid_l +
                        curr_node.y() * sim_info.grid_l + curr_node.z();
