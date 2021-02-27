@@ -70,6 +70,7 @@ std::tuple<Vector3i, Matrix3f, Matrix3f> quatratic_interpolation(
   Vector3i base_node = floor(particle_pos.array() - 0.5f).cast<int>();
   Matrix3f wp, dwp;
 
+  // note: load by columns
   wp << calc_quadratic(base_node(0), particle_pos(0)),
       calc_quadratic(base_node(1), particle_pos(1)),
       calc_quadratic(base_node(2), particle_pos(2));

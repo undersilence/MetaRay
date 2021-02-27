@@ -5,25 +5,32 @@
 namespace mpm {
 
 void MPMSim::mpm_demo() {
-  // initialize logger
-  mpm::MPMLog::init();
-
   float density = 1.0f;
-  float mass = 1.0f;
+  float mass = 10.0f;
   Vector3f gravity{0.0f, -9.8f, 0.0f};
   Vector3f area{1.0f, 1.0f, 1.0f};
-  float h = 0.2f;
+  float h = 0.02f;
 
   mpm_initialize(density, mass, "../models/small_cube.obj", gravity, area, h);
 
   int frame_rate = 60;
-  float dt = 1.0f / frame_rate;
-  int frame_count = 300;
+  float dt = 1e-4f;
+  int total_frame = 120;
+  int steps_per_frame = (int)ceil((1.0f / frame_rate) / dt);
 
-  for (int curr_frame = 1; curr_frame <= frame_count; curr_frame++) {
-    MPM_INFO("now processing frame: {}", curr_frame);
+  MPM_INFO(
+      "Simulation start, Meta Informations:\n"
+      "\tframe_rate: {}\n"
+      "\tdt: {}\n"
+      "\tsteps_per_frame: {}\n",
+      frame_rate, dt, steps_per_frame);
+
+  for (int step = 0, frame = 0; frame < total_frame; step++) {
+    // MPM_INFO("now processing step: {}", step);
     substep(dt);
-    export_result("../output/", curr_frame);
+    if (step % steps_per_frame == 0) {
+      export_result("../output/", ++frame);
+    }
   }
 }
 
@@ -41,6 +48,7 @@ void MPMSim::substep(float dt) {
 }
 
 bool MPMSim::export_result(const std::string& export_dir, int curr_frame) {
+  MPM_INFO("export frame_{}'s result.", curr_frame);
   std::vector<Vector3f> positions(sim_info.particle_size);
   for (int i = 0; i < sim_info.particle_size; i++) {
     positions[i] = particles[i].pos_p;
@@ -51,8 +59,8 @@ bool MPMSim::export_result(const std::string& export_dir, int curr_frame) {
 
 bool MPMSim::mpm_initialize(float particle_density, float particle_mass,
                             const std::string& model_path,
-                            const Vector3f& gravity, const Vector3f& world_area,
-                            float h) {
+                            const Vector3f& velocity, const Vector3f& gravity,
+                            const Vector3f& world_area, float h) {
   std::vector<Vector3f> positions;
   if (read_particles(model_path, positions)) {
     sim_info.particle_density = particle_density;
@@ -69,7 +77,7 @@ bool MPMSim::mpm_initialize(float particle_density, float particle_mass,
       particles[i].pos_p = positions[i];
       particles[i].mass_p = particle_mass;
       particles[i].volume_p = particle_mass / particle_density;
-      particles[i].vel_p = Vector3f::Zero();
+      particles[i].vel_p = velocity;
       particles[i].F = Matrix3f::Identity();
     }
 
@@ -95,8 +103,7 @@ bool MPMSim::mpm_initialize(float particle_density, float particle_mass,
 
     return true;
   } else {
-    fprintf(stderr, "[MPM]:model data not found! %s\n",
-            sim_info.model_path.c_str());
+    MPM_ERROR("[MPM]:model data not found! %s\n", sim_info.model_path.c_str());
     return false;
   }
 }
@@ -108,10 +115,10 @@ void MPMSim::prestep() {
     grid_attrs[i].vel_i = Vector3f::Zero();
     grid_attrs[i].vel_in = Vector3f::Zero();
   }
+  active_nodes.clear();
 }
 
 void MPMSim::transfer_P2G() {
-  active_nodes.clear();
   // Matrix3f wp, dwp;
   for (int iter = 0; iter < sim_info.particle_size; iter++) {
     // convert particles position to grid space by divide h
@@ -130,8 +137,9 @@ void MPMSim::transfer_P2G() {
           MPM_ASSERT(0 <= index && index < sim_info.grid_size);
           // MPM_INFO("curr_node:\n{}", curr_node);
 
-          float wijk = wp(0, i) * wp(1, j) * wp(2, k);
-
+          float wijk = wp(i, 0) * wp(j, 1) * wp(k, 2);
+          // MPM_INFO("display wijk={}*{}*{}={}, wp:\n{}", wp(i, 0), wp(j, 1),
+          //          wp(k, 2), wijk, wp);
           grid_attrs[index].mass_i += wijk * particles[iter].mass_p;
           // accumulate momentum at time n
           grid_attrs[index].vel_in +=
@@ -150,7 +158,7 @@ void MPMSim::transfer_P2G() {
 }
 
 void MPMSim::add_gravity() {
-  MPM_ASSERT(active_nodes.size() < sim_info.grid_size);
+  // MPM_ASSERT(active_nodes.size() < sim_info.grid_size);
   for (auto iter = 0; iter < active_nodes.size(); iter++) {
     int index = active_nodes[iter];
     grid_attrs[index].force_i += sim_info.gravity * grid_attrs[index].mass_i;
@@ -161,7 +169,6 @@ void MPMSim::update_grid_force(
     std::function<Matrix3f(float, float, const Matrix3f&)> constitutive_model) {
   // update grid forcing from particles F(deformation gradients)
 
-  MPM_INFO("{} start", __func__);
   for (int iter = 0; iter < sim_info.particle_size; iter++) {
     auto F = particles[iter].F;
     auto vol_p = particles[iter].volume_p;
@@ -176,9 +183,9 @@ void MPMSim::update_grid_force(
       for (int j = 0; j < 3; j++)
         for (int k = 0; k < 3; k++) {
           Vector3i curr_node = base_node + Vector3i(i, j, k);
-          Vector3f grad_wip{dwp(0, i) * wp(1, j) * wp(2, k) / h,
-                            wp(0, i) * dwp(1, j) * wp(2, k) / h,
-                            wp(0, i) * wp(1, j) * dwp(2, k) / h};
+          Vector3f grad_wip{dwp(i, 0) * wp(j, 1) * wp(k, 2) / h,
+                            wp(i, 0) * dwp(j, 1) * wp(k, 2) / h,
+                            wp(i, 0) * wp(j, 1) * dwp(k, 2) / h};
 
           auto index = curr_node.x() * sim_info.grid_h * sim_info.grid_l +
                        curr_node.y() * sim_info.grid_l + curr_node.z();
@@ -189,7 +196,14 @@ void MPMSim::update_grid_force(
         }
   }
 
-  MPM_INFO("{} end", __func__);
+  // auto max_iter = std::max_element(grid_attrs.begin(), grid_attrs.end(),
+  //                                  [&](const GridAttr& a, const GridAttr& b)
+  //                                  {
+  //                                    return a.force_i.squaredNorm() >
+  //                                           b.force_i.squaredNorm();
+  //                                  });
+  // MPM_INFO("grid_attrs' max force_i\n{} at {}", max_iter->force_i,
+  //          max_iter - grid_attrs.begin());
 }
 
 void MPMSim::update_grid_velocity(float dt) {
@@ -198,7 +212,7 @@ void MPMSim::update_grid_velocity(float dt) {
     // vel_n+1 = vel_n + f_i / m_i * dt
     grid_attrs[index].vel_i =
         grid_attrs[index].vel_in +
-        grid_attrs[index].force_i / grid_attrs[index].mass_i * dt;
+        dt * grid_attrs[index].force_i / grid_attrs[index].mass_i;
   }
 }
 
@@ -214,19 +228,27 @@ void MPMSim::update_F(float dt) {
       for (int j = 0; j < 3; j++)
         for (int k = 0; k < 3; k++) {
           Vector3i curr_node = base_node + Vector3i(i, j, k);
-          Vector3f grad_wip{dwp(0, i) * wp(1, j) * wp(2, k) / h,
-                            wp(0, i) * dwp(1, j) * wp(2, k) / h,
-                            wp(0, i) * wp(1, j) * dwp(2, k) / h};
+          Vector3f grad_wip(dwp(i, 0) * wp(j, 1) * wp(k, 2) / h,
+                            wp(i, 0) * dwp(j, 1) * wp(k, 2) / h,
+                            wp(i, 0) * wp(j, 1) * dwp(k, 2) / h);
 
           auto index = curr_node.x() * sim_info.grid_h * sim_info.grid_l +
                        curr_node.y() * sim_info.grid_l + curr_node.z();
 
-          weight += grid_attrs[index].vel_in * grad_wip.transpose();
+          MPM_ASSERT(0 <= index && index < sim_info.grid_size);
+
+          weight += grid_attrs[index].vel_i * grad_wip.transpose();
         }
-    weight *= dt;
-    weight += Matrix3f::Identity();
-    particles[iter].F = weight * F;
+
+    particles[iter].F = F + dt * weight * F;
+
+    if (particles[iter].F.determinant() < 0) {
+      MPM_ERROR("particles[{}]'s determinat(F) is negative!\n{}", iter,
+                particles[iter].F);
+      assert(false);
+    }
   }
+  // MPM_INFO("particles[0]'s F:\n{}", particles[0].F);
 }
 
 void MPMSim::transfer_G2P() {
@@ -240,9 +262,12 @@ void MPMSim::transfer_G2P() {
       for (int j = 0; j < 3; j++)
         for (int k = 0; k < 3; k++) {
           Vector3i curr_node = base_node + Vector3i(i, j, k);
-          auto wijk = wp(0, i) * wp(1, j) * wp(2, k);
+          auto wijk = wp(i, 0) * wp(j, 1) * wp(k, 2);
           auto index = curr_node.x() * sim_info.grid_h * sim_info.grid_l +
                        curr_node.y() * sim_info.grid_l + curr_node.z();
+
+          MPM_ASSERT(0 <= index && index < sim_info.grid_size);
+
           v_pic += wijk * grid_attrs[index].vel_i;
           v_flip += wijk * (grid_attrs[index].vel_i - grid_attrs[index].vel_in);
         }
@@ -255,11 +280,11 @@ void MPMSim::transfer_G2P() {
 void MPMSim::advection(float dt) {
   for (int i = 0; i < sim_info.particle_size; i++) {
     particles[i].pos_p += dt * particles[i].vel_p;
-    if (i < 5)
-      MPM_INFO("particle_{} vel:({},{},{}), move to ({},{},{})", i,
-               particles[i].vel_p[0], particles[i].vel_p[1],
-               particles[i].vel_p[2], particles[i].pos_p[0],
-               particles[i].pos_p[1], particles[i].pos_p[2]);
+    // if (i < 5)
+    //   MPM_TRACE("particle_{} vel:({},{},{}), move to ({},{},{})", i,
+    //             particles[i].vel_p[0], particles[i].vel_p[1],
+    //             particles[i].vel_p[2], particles[i].pos_p[0],
+    //             particles[i].pos_p[1], particles[i].pos_p[2]);
   }
 }
 
@@ -301,7 +326,7 @@ void MPMSim::solve_grid_boundary(int thickness) {
     for (int j = 0; j < H; j++) {
       for (int k = 0; k < thickness; k++) {
         int index1 = i * H * L + j * L + k;
-        int index2 = (W - i - 1) * H * L + j * L + (L - k - 1);
+        int index2 = i * H * L + j * L + (L - k - 1);
         if (grid_attrs[index1].vel_i[2] < 0) {
           grid_attrs[index1].vel_i[2] = 0.0f;
         }

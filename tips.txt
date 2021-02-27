@@ -10,3 +10,17 @@
 
 note:
 0. 为了支持跨平台，OpenGL也挺不错，Vulkan学习成本有点高
+
+
+mpm note:
+
+1. auto x = u + v; 
+    此处使用eigen::Vector3f乘法返回值避免使用auto
+    使用auto类型，x会转换为一个binary_op的中间优化类型
+    会在release情况下出错，所以尽确定固定类型
+
+2. Matrix3f mat << u, v, w
+    此处载入的三个向量是按列存储在矩阵中的
+    [u.x, v.x, w.x]
+    [u.y, v.y, w.y]
+    [u.z, v.z, w.z] 非常坑人!

@@ -13,8 +13,9 @@ class MPMSim {
   void mpm_demo();
 
   bool mpm_initialize(float particle_density, float particle_mass,
-                      const std::string& model_path, const Vector3f& gravity,
-                      const Vector3f& world_area, float h);
+                      const std::string& model_path, const Vector3f& velocity,
+                      const Vector3f& gravity, const Vector3f& world_area,
+                      float h);
   // void grid_initialize();
   // void particle_initialize();
   void substep(float dt);
