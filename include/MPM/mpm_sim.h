@@ -1,5 +1,7 @@
 #pragma once
 #include "MPM/mpm_defs.h"
+#include "tbb/concurrent_vector.h"
+#include "tbb/spin_mutex.h"
 
 using namespace Eigen;
 namespace mpm {
@@ -8,7 +10,7 @@ namespace mpm {
 class MPMSim {
  public:
   MPMSim() = default;
-  virtual ~MPMSim() = default;
+  virtual ~MPMSim();
 
   void mpm_demo();
 
@@ -23,11 +25,13 @@ class MPMSim {
 
  private:
   SimInfo sim_info;
-  std::vector<Particle> particles;
-  std::vector<GridAttr> grid_attrs;
+  Particle* particles;
+  GridAttr* grid_attrs;
+  tbb::spin_mutex* grid_mutexs;
 
-  // storage the degrees of freedoms
-  std::vector<int> active_nodes;
+  // storage the degree of freedoms
+  tbb::concurrent_vector<int> active_nodes;
+  // std::vector<int> active_nodes;
 
   void prestep();
   void transfer_P2G();

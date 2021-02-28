@@ -24,3 +24,57 @@ mpm note:
     [u.x, v.x, w.x]
     [u.y, v.y, w.y]
     [u.z, v.z, w.z] 非常坑人!
+
+mpm todo list:
+
+1. 加入 tbb 多线程支持
+2. 实现 snow 弹塑性模型
+3. 实现 APIC G2P/P2G 功能
+3. 实现自动将 .obj 转换为点集功能
+
+
+tbb note:
+
+with tbb multi-threading
+[2021-02-28 19:48:36.675] [MPM] [trace] [profiler] prestep cost 0.149 ms
+[2021-02-28 19:48:36.675] [MPM] [trace] [profiler] transfer_P2G cost 0.662 ms
+[2021-02-28 19:48:36.675] [MPM] [trace] [profiler] add_gravity cost 0.026 ms
+[2021-02-28 19:48:36.676] [MPM] [trace] [profiler] update_grid_force cost 0.665 ms
+[2021-02-28 19:48:36.676] [MPM] [trace] [profiler] update_grid_velocity cost 0.042 ms
+[2021-02-28 19:48:36.676] [MPM] [trace] [profiler] solve_grid_boundary cost 0.072 ms
+[2021-02-28 19:48:36.676] [MPM] [trace] [profiler] update_F cost 0.119 ms
+[2021-02-28 19:48:36.676] [MPM] [trace] [profiler] transfer_G2P cost 0.059 ms
+[2021-02-28 19:48:36.676] [MPM] [trace] [profiler] advection cost 0.025 ms
+[2021-02-28 19:48:36.676] [MPM] [trace] [profiler] substep cost 1.854 ms
+[2021-02-28 19:48:36.676] [MPM] [trace] [profiler] frame#60 cost 35.276 ms
+
+without P2G
+[2021-02-28 19:53:58.255] [MPM] [trace] [profiler] prestep cost 0.16 ms
+[2021-02-28 19:53:58.256] [MPM] [trace] [profiler] transfer_P2G cost 0.873 ms
+[2021-02-28 19:53:58.256] [MPM] [trace] [profiler] add_gravity cost 0.036 ms
+[2021-02-28 19:53:58.258] [MPM] [trace] [profiler] update_grid_force cost 1.927 ms
+[2021-02-28 19:53:58.258] [MPM] [trace] [profiler] update_grid_velocity cost 0.058 ms
+[2021-02-28 19:53:58.258] [MPM] [trace] [profiler] solve_grid_boundary cost 0.102 ms
+[2021-02-28 19:53:58.258] [MPM] [trace] [profiler] update_F cost 0.148 ms
+[2021-02-28 19:53:58.259] [MPM] [trace] [profiler] transfer_G2P cost 0.071 ms
+[2021-02-28 19:53:58.259] [MPM] [trace] [profiler] advection cost 0.023 ms
+[2021-02-28 19:53:58.259] [MPM] [trace] [profiler] substep cost 3.431 ms
+[2021-02-28 19:53:58.259] [MPM] [trace] [profiler] frame#60 cost 63.277 ms
+
+
+
+
+without all
+[2021-02-28 19:52:13.708] [MPM] [trace] [profiler] prestep cost 0.167 ms
+[2021-02-28 19:52:13.708] [MPM] [trace] [profiler] transfer_P2G cost 0.661 ms
+[2021-02-28 19:52:13.708] [MPM] [trace] [profiler] add_gravity cost 0.039 ms
+[2021-02-28 19:52:13.710] [MPM] [trace] [profiler] update_grid_force cost 2 ms
+[2021-02-28 19:52:13.710] [MPM] [trace] [profiler] update_grid_velocity cost 0.059 ms
+[2021-02-28 19:52:13.711] [MPM] [trace] [profiler] solve_grid_boundary cost 0.09 ms
+[2021-02-28 19:52:13.711] [MPM] [trace] [profiler] update_F cost 0.13 ms
+[2021-02-28 19:52:13.711] [MPM] [trace] [profiler] transfer_G2P cost 0.064 ms
+[2021-02-28 19:52:13.711] [MPM] [trace] [profiler] advection cost 0.025 ms
+[2021-02-28 19:52:13.711] [MPM] [trace] [profiler] substep cost 3.272 ms
+[2021-02-28 19:52:13.711] [MPM] [trace] [profiler] frame#60 cost 55.25 ms
+
+

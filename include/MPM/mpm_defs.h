@@ -4,6 +4,7 @@
 #include <Eigen/Sparse>
 #include <Eigen/SparseQR>
 #include <Eigen/StdVector>
+#include <chrono>
 #include <cmath>
 #include <fstream>
 #include <iostream>
@@ -70,6 +71,17 @@ class MPMLog {
   static std::shared_ptr<spdlog::logger> s_logger;
 };
 
+class MPMProfiler {
+ public:
+  MPMProfiler(const std::string& tag);
+  virtual ~MPMProfiler();
+
+ private:
+  std::string tag;
+  std::chrono::high_resolution_clock::time_point start;
+};
+
+#ifndef DISTRIBUTE
 // Client log macros
 #define MPM_FATAL(...) MPMLog::get_logger()->fatal(__VA_ARGS__)
 #define MPM_ERROR(...) MPMLog::get_logger()->error(__VA_ARGS__)
@@ -78,4 +90,25 @@ class MPMLog {
 #define MPM_TRACE(...) MPMLog::get_logger()->trace(__VA_ARGS__)
 
 #define MPM_ASSERT(...) assert(__VA_ARGS__)
+
+#define MPM_FUNCTION_SIG __func__
+#define MPM_PROFILE(tag) MPMProfiler timer##__LINE__(tag)
+#define MPM_PROFILE_FUNCTION() MPM_PROFILE(MPM_FUNCTION_SIG)
+
+#else
+
+#define MPM_FATAL(...)
+#define MPM_ERROR(...)
+#define MPM_WARN(...)
+#define MPM_INFO(...)
+#define MPM_TRACE(...)
+
+#define MPM_ASSERT(...)
+
+#define MPM_FUNCTION_SIG
+#define MPM_PROFILE(tag)
+#define MPM_PROFILE_FUNCTION()
+
+#endif
+
 }  // namespace mpm

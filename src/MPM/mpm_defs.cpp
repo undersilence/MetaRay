@@ -17,4 +17,17 @@ void MPMLog::init() {
   s_logger->set_level(spdlog::level::level_enum::trace);
 }
 
+MPMProfiler::MPMProfiler(const std::string& tag) : tag(tag) {
+  start = std::chrono::high_resolution_clock::now();
+}
+
+MPMProfiler::~MPMProfiler() {
+  auto end = std::chrono::high_resolution_clock::now();
+
+  MPM_TRACE("[profiler] {} cost {} ms", tag,
+            std::chrono::duration_cast<std::chrono::microseconds>(end - start)
+                    .count() /
+                1000.0f);
+}
+
 }  // namespace mpm

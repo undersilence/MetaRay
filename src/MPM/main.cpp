@@ -6,9 +6,11 @@
 #include "MPM/mpm_utils.h"
 using namespace std;
 using namespace Eigen;
+using namespace mpm;
 
 void quatratic_test() {
-  mpm::MPM_INFO("{} start", __func__);
+  MPM_PROFILE_FUNCTION();
+  MPM_INFO("{} start", __func__);
   float h = 0.02f;
   int W = 1.0f / h + 1;
   int H = 1.0f / h + 1;
@@ -27,12 +29,11 @@ void quatratic_test() {
         Vector3f grad_wp(dwi * wj * wk / h, wi * dwj * wk / h,
                          wi * wj * dwk / h);
 
-        mpm::MPM_INFO("offset: {}", Vector3i(i, j, k).transpose());
-        mpm::MPM_INFO("weight_ijk: {}", wijk);
-        mpm::MPM_INFO("grad_wp: {}", grad_wp.transpose());
+        MPM_INFO("offset: {}", Vector3i(i, j, k).transpose());
+        MPM_INFO("weight_ijk: {}", wijk);
+        MPM_INFO("grad_wp: {}", grad_wp.transpose());
       }
-
-  mpm::MPM_INFO("{} end", __func__);
+  MPM_INFO("{} end", __func__);
 }
 
 int main() {
