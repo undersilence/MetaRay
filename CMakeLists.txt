@@ -25,38 +25,11 @@ file(COPY ${SHADERS} DESTINATION ${EXECUTABLE_OUTPUT_DIRECTORY}${CMAKE_BUILD_TYP
 # add_library(MetaRay MTR/math_defs.cpp)
 
 add_subdirectory(external/glad)
-add_subdirectory(external/partio)
+# add_subdirectory(external/partio)
 add_subdirectory(external/spdlog)
 
 add_subdirectory(src/MTR)
-add_subdirectory(src/MPM)
+# add_subdirectory(src/MPM)
 add_subdirectory(src/examples)
 
-
-
-# set(SRCS
-#     src/MTR/math_defs.cpp
-#     main.cpp)
-
-# message(${SRCS})
-
-# set(ExecTarget ${PROJECT_NAME})
-# add_executable(${ExecTarget} ${SRCS})
-
-# target_link_libraries(${ExecTarget} PRIVATE glad)
-
-# find_package(jsoncpp CONFIG REQUIRED)
-# target_link_libraries(${ExecTarget} PRIVATE jsoncpp_lib jsoncpp_object)
-
-# find_package(glfw3 CONFIG REQUIRED)
-# target_link_libraries(${ExecTarget} PRIVATE glfw)
-
-# find_package(Eigen3 CONFIG REQUIRED)
-# target_link_libraries(${ExecTarget} PRIVATE Eigen3::Eigen)
-
-# find_package(imgui CONFIG REQUIRED)
-# target_link_libraries(${ExecTarget} PRIVATE imgui::imgui)
-
-# find_package(spdlog CONFIG REQUIRED)
-# target_link_libraries(${ExecTarget} PRIVATE spdlog::spdlog spdlog::spdlog_header_only)
 
