@@ -231,27 +231,7 @@ void SoftRaster::rasterize_triangle(TVert2Frag v2f[3], vec4f clip_pos[3],
           depth_buf[get_index(x, y)] > frag_depth)
         continue;
 
-      // decltype(shader->vert2frag_cls) payload;
-      // payload.color << 0.5f, 1.0f, 0.0f, 1.0f;
-      // printf("size of payload v2f: %d\n", sizeof(V2F));
-      // vecNf a, b, c;
-      // auto ptr_a = reinterpret_cast<float *>(v2f + 0);
-      // auto ptr_b = reinterpret_cast<float *>(v2f + 1);
-      // auto ptr_c = reinterpret_cast<float *>(v2f + 2);
-
-      // const int arr_length = sizeof(v2f[0]) / sizeof(float);
-      // Eigen::Matrix<float, arr_length, 1> attr_a =
-      //     Eigen::Map<Eigen::Matrix<float, arr_length, 1>>(ptr_a);
-      // Eigen::Matrix<float, arr_length, 1> attr_b =
-      //     Eigen::Map<Eigen::Matrix<float, arr_length, 1>>(ptr_b);
-      // Eigen::Matrix<float, arr_length, 1> attr_c =
-      //     Eigen::Map<Eigen::Matrix<float, arr_length, 1>>(ptr_c);
-
-      // Eigen::Matrix<float, arr_length, 3> attr_mat;
-      // attr_mat << attr_a, attr_b, attr_c;
-
       auto result = interpolate_attr(v2f, bc_clip);
-
       // auto result = shader->interpolate_attr(v2f, bc_clip);
       auto color = shader->fragment_shader(result);
       set_pixel(vec2i(x, y), color);
