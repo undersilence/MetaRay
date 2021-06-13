@@ -4,9 +4,10 @@ set(CMAKE_CXX_STANDARD 17)
 project(MetaRay)
 
 include_directories(include)
+include_directories(src)
 include_directories(external/glad/include)
-include_directories(external/partio/src/lib)
 include_directories(external/spdlog/include)
+include_directories(external/eigen)
 
 # aux_source_directory(src/MTR MTR_SRCS)
 # aux_source_directory(src SRCS)

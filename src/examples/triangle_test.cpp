@@ -1,7 +1,7 @@
 #include <iostream>
 #include <memory>
 
-#include "MTR/math_defs.h"
+#include "MTR/math_defs.hpp"
 #include "MTR/rasterizer.hpp"
 
 using namespace mtr;

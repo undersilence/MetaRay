@@ -1,11 +1,11 @@
-#include "MTR/math_defs.h"
+#include "MTR/math_defs.hpp"
 
 float clamp(float min, float max, float a) {
   return a > min ? (a < max ? a : max) : min;
 }
 
 float to_radians(float degree) { return degree / 180.0f * MTR_PI; }
-float to_degrees(float radius) { return radius / MTR_PI * 180.0f; }
+float to_degrees(float radian) { return radian / MTR_PI * 180.0f; }
 
 // define reversed-z perspective projection
 mat4f perspective(float fovy, float aspect, float near, float far) {
